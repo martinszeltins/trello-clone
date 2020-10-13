@@ -9,10 +9,10 @@ export default {
 
             tasks: [
                 {
-                    id: uuid(),
+                    id: '1',
                     name: 'first task',
-                    description: '',
-                    userAssigned: null
+                    description: 'Take out the trash which is found on the fridge',
+                    userAssigned: null,
                 },
 
                 {
@@ -38,7 +38,7 @@ export default {
                 {
                     id: uuid(),
                     name: 'first task',
-                    description: '',
+                    description: 'The bag is in the room',
                     userAssigned: null
                 }
             ]
@@ -55,6 +55,19 @@ export default {
                     userAssigned: null
                 }
             ]
-        }
+        },
+
+        {
+            name: 'do later',
+
+            tasks: [
+                {
+                    id: uuid(),
+                    name: 'Do this thing later',
+                    description: '',
+                    userAssigned: null
+                }
+            ]
+        },
     ]
 }

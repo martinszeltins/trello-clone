@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Task from './views/Task.vue'
 import Board from './views/Board.vue'
 
 Vue.use(Router)
@@ -7,11 +8,20 @@ Vue.use(Router)
 export default new Router({
     mode: 'history',
     base: process.env.BASE_URL,
-    routes: [
+
+    routes:
+    [
         {
             path: '/',
             name: 'board',
-            component: Board
+            component: Board,
+            children: [
+                {
+                    path: '/task/:id',
+                    name: 'task',
+                    component: Task,
+                },
+            ],
         }
     ]
 })
