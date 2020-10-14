@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://todo.martinsz.lv" target="_blank">
-    <img alt="Logo" width="100" src="https://todo.martinsz.lv/img/trello-144.png">
+    <img alt="Logo" width="100" src="https://trello.martinsz.lv/img/trello-144.png">
   </a>
 </p>
 
