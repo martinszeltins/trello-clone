@@ -4,6 +4,11 @@
             <div
                 v-for="(column, columnIndex) in store.board.columns"
                 :key="columnIndex"
+                draggable
+                @drop="moveTaskOrColumn($event, column.tasks, columnIndex, taskIndex)"
+                @dragover.prevent
+                @dragenter.prevent
+                @dragstart.self="pickupColumn($event, columnIndex)"
                 class="column">
 
                 <div class="flex items-center mb-2 font-bold">
@@ -16,8 +21,11 @@
                         v-for="(task, taskIndex) of column.tasks"
                         :key="task.id"
                         @click="openTask(task)"
-                        draggable
                         @dragstart="pickupTask($event, taskIndex, columnIndex)"
+                        @dragover.prevent
+                        @dragenter.prevent
+                        @drop.stop="moveTaskOrColumn($event, column.tasks, columnIndex, taskIndex)"
+                        draggable
                         class="task">
 
                         <span class="w-full flex-no-shrink font-bold">
@@ -40,6 +48,16 @@
                     />
                 </div>
             </div>
+
+            <div class="column flex">
+                <input
+                    class="p-2 mr-2 flex-grow"
+                    placeholder="New Column Name"
+                    type="text"
+                    v-model="newColumnName"
+                    @keyup.enter="createColumn"
+                />
+            </div>
         </div>
 
         <div
@@ -57,19 +75,44 @@
         data()
         {
             return {
-                store: this.$store.state
+                store: this.$store.state,
+                newColumnName: '',
             }
         },
 
         methods:
         {
+            createColumn()
+            {
+                this.$store.commit('createColumn', {
+                    name: this.newColumnName,
+                })
+
+                this.newColumnName = ''
+            },
+
             pickupTask(event, taskIndex, fromColumnIndex)
             {
                 event.dataTransfer.effectAllowed = 'move'
                 event.dataTransfer.dropEffect = 'move'
 
-                event.dataTransfer.setData('task-index', taskIndex)
+                event.dataTransfer.setData('from-task-index', taskIndex)
                 event.dataTransfer.setData('from-column-index', fromColumnIndex)
+                event.dataTransfer.setData('type', 'task')
+            },
+
+            moveTask(event, toTasks, toTaskIndex)
+            {
+                const fromColumnIndex = event.dataTransfer.getData('from-column-index')
+                const fromTasks = this.store.board.columns[fromColumnIndex].tasks
+                const fromTaskIndex = event.dataTransfer.getData('from-task-index')
+
+                this.$store.commit('moveTask', {
+                    fromTasks: fromTasks,
+                    toTasks: toTasks,
+                    fromTaskIndex: fromTaskIndex,
+                    toTaskIndex: toTaskIndex,
+                })
             },
 
             createTask(event, tasks)
@@ -96,6 +139,39 @@
                     params: {
                         id: task.id
                     }
+                })
+            },
+
+            pickupColumn(event, fromColumnIndex)
+            {
+                event.dataTransfer.effectAllowed = 'move'
+                event.dataTransfer.dropEffect = 'move'
+
+                event.dataTransfer.setData('from-column-index', fromColumnIndex)
+                event.dataTransfer.setData('type', 'column')
+            },
+
+            moveTaskOrColumn(event, toTasks, toColumnIndex, toTaskIndex)
+            {
+                const type = event.dataTransfer.getData('type')
+
+                if (type == 'task') {
+                    let index = (toTaskIndex !== undefined) ? toTaskIndex : toTasks.length
+                    this.moveTask(event, toTasks, index)
+                }
+
+                if (type == 'column') {
+                    this.moveColumn(event, toColumnIndex)
+                }
+            },
+
+            moveColumn(event, toColumnIndex)
+            {
+                const fromColumnIndex = event.dataTransfer.getData('from-column-index')
+
+                this.$store.commit('moveColumn', {
+                    fromColumnIndex: fromColumnIndex,
+                    toColumnIndex: toColumnIndex,
                 })
             },
         },
