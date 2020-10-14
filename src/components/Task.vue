@@ -22,14 +22,11 @@
 </template>
 
 <script>
+    import MovingTasksAndColumns from '../mixins/movingTasksAndColumns.js'
+
     export default {
         props:
         {
-            column: {
-                type: Object,
-                required: true,
-            },
-
             task: {
                 type: Object,
                 required: true,
@@ -39,12 +36,9 @@
                 type: Number,
                 required: true,
             },
-
-            columnIndex: {
-                type: Number,
-                required: true,
-            },
         },
+
+        mixins: [ MovingTasksAndColumns ],
 
         data()
         {
@@ -73,44 +67,6 @@
                 event.dataTransfer.setData('from-task-index', taskIndex)
                 event.dataTransfer.setData('from-column-index', fromColumnIndex)
                 event.dataTransfer.setData('type', 'task')
-            },
-
-            moveTaskOrColumn(event, toTasks, toColumnIndex, toTaskIndex)
-            {
-                const type = event.dataTransfer.getData('type')
-
-                if (type == 'task') {
-                    let index = (toTaskIndex !== undefined) ? toTaskIndex : toTasks.length
-                    this.moveTask(event, toTasks, index)
-                }
-
-                if (type == 'column') {
-                    this.moveColumn(event, toColumnIndex)
-                }
-            },
-
-            moveTask(event, toTasks, toTaskIndex)
-            {
-                const fromColumnIndex = event.dataTransfer.getData('from-column-index')
-                const fromTasks = this.store.board.columns[fromColumnIndex].tasks
-                const fromTaskIndex = event.dataTransfer.getData('from-task-index')
-
-                this.$store.commit('moveTask', {
-                    fromTasks: fromTasks,
-                    toTasks: toTasks,
-                    fromTaskIndex: fromTaskIndex,
-                    toTaskIndex: toTaskIndex,
-                })
-            },
-
-            moveColumn(event, toColumnIndex)
-            {
-                const fromColumnIndex = event.dataTransfer.getData('from-column-index')
-
-                this.$store.commit('moveColumn', {
-                    fromColumnIndex: fromColumnIndex,
-                    toColumnIndex: toColumnIndex,
-                })
             },
         },
     }
