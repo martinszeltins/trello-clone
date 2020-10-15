@@ -14,41 +14,34 @@ export default {
 
     methods:
     {
-        moveTask(event, toTasks, toTaskIndex)
+        moveTask({ fromColumnIndex, fromTaskIndex })
         {
-            const fromColumnIndex = event.dataTransfer.getData('from-column-index')
             const fromTasks = this.store.board.columns[fromColumnIndex].tasks
-            const fromTaskIndex = event.dataTransfer.getData('from-task-index')
 
             this.$store.commit('moveTask', {
                 fromTasks: fromTasks,
-                toTasks: toTasks,
+                toTasks: this.column.tasks,
                 fromTaskIndex: fromTaskIndex,
-                toTaskIndex: toTaskIndex,
+                toTaskIndex: this.taskIndex,
             })
         },
 
-        moveTaskOrColumn(event, toTasks, toColumnIndex, toTaskIndex)
+        moveTaskOrColumn(transferData)
         {
-            const type = event.dataTransfer.getData('type')
-
-            if (type == 'task') {
-                let index = (toTaskIndex !== undefined) ? toTaskIndex : toTasks.length
-                this.moveTask(event, toTasks, index)
+            if (transferData.type == 'task') {
+                this.moveTask(transferData)
             }
 
-            if (type == 'column') {
-                this.moveColumn(event, toColumnIndex)
+            if (transferData.type == 'column') {
+                this.moveColumn(transferData)
             }
         },
 
-        moveColumn(event, toColumnIndex)
+        moveColumn({ fromColumnIndex })
         {
-            const fromColumnIndex = event.dataTransfer.getData('from-column-index')
-
             this.$store.commit('moveColumn', {
                 fromColumnIndex: fromColumnIndex,
-                toColumnIndex: toColumnIndex,
+                toColumnIndex: this.columnIndex,
             })
         },
     },

@@ -1,37 +1,36 @@
 <template>
-    <div
-        draggable
-        @drop="moveTaskOrColumn($event, column.tasks, columnIndex, taskIndex)"
-        @dragover.prevent
-        @dragenter.prevent
-        @dragstart.self="pickupColumn($event, columnIndex)"
-        class="column">
+    <App-drop @drop="moveTaskOrColumn">
+        <App-drag :transferData="{ type: 'column', fromColumnIndex: columnIndex }">
+            <div class="column">
+                <div class="flex items-center mb-2 font-bold">
+                    {{ column.name }}
+                </div>
 
-        <div class="flex items-center mb-2 font-bold">
-            {{ column.name }}
-        </div>
+                <div class="list-reset">
+                    <Task         
+                        v-for="(task, taskIndex) of column.tasks"
+                        :key="task.id"
+                        :task="task"
+                        :taskIndex="taskIndex"
+                        :columnIndex="columnIndex"
+                        :column="column"
+                    />
 
-        <div class="list-reset">
-            <Task         
-                v-for="(task, taskIndex) of column.tasks"
-                :key="task.id"
-                :task="task"
-                :taskIndex="taskIndex"
-                :columnIndex="columnIndex"
-                :column="column"
-            />
-
-            <input
-                @keyup.enter="createTask($event, column.tasks)"
-                type="text"
-                class="block p-2 w-full bg-transparent"
-                placeholder="+ Enter new task"
-            />
-        </div>
-    </div>
+                    <input
+                        @keyup.enter="createTask($event, column.tasks)"
+                        type="text"
+                        class="block p-2 w-full bg-transparent"
+                        placeholder="+ Enter new task"
+                    />
+                </div>
+            </div>
+        </App-drag>
+    </App-drop>
 </template>
 
 <script>
+    import AppDrag from './AppDrag.vue'
+    import AppDrop from './AppDrop.vue'
     import Task from '../components/Task.vue'
     import MovingTasksAndColumns from '../mixins/movingTasksAndColumns.js'
 
@@ -39,6 +38,8 @@
         components:
         {
             Task,
+            AppDrag,
+            AppDrop,
         },
 
         mixins: [ MovingTasksAndColumns ],
@@ -60,15 +61,6 @@
                 })
 
                 event.target.value = ''
-            },
-
-            pickupColumn(event, fromColumnIndex)
-            {
-                event.dataTransfer.effectAllowed = 'move'
-                event.dataTransfer.dropEffect = 'move'
-
-                event.dataTransfer.setData('from-column-index', fromColumnIndex)
-                event.dataTransfer.setData('type', 'column')
             },
         },
     }

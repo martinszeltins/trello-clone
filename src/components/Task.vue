@@ -1,27 +1,28 @@
 <template>
-    <div
-        @click="openTask(task)"
-        @dragstart="pickupTask($event, taskIndex, columnIndex)"
-        @dragover.prevent
-        @dragenter.prevent
-        @drop.stop="moveTaskOrColumn($event, column.tasks, columnIndex, taskIndex)"
-        draggable
-        class="task">
+    <App-drop @drop="moveTaskOrColumn">
+        <App-drag :transferData="{ type: 'task', fromColumnIndex: columnIndex, fromTaskIndex: taskIndex }">
+            <div
+                class="task"
+                @click="openTask(task)">
 
-        <span class="w-full flex-no-shrink font-bold">
-            {{ task.name }}
-        </span>
+                <span class="w-full flex-no-shrink font-bold">
+                    {{ task.name }}
+                </span>
 
-        <p
-            v-if="task.description"
-            class="w-full flex-no-shrink mt-1 text-sm">
+                <p
+                    v-if="task.description"
+                    class="w-full flex-no-shrink mt-1 text-sm">
 
-            {{ task.description }}
-        </p>
-    </div>
+                    {{ task.description }}
+                </p>
+            </div>
+        </App-drag>
+    </App-drop>
 </template>
 
 <script>
+    import AppDrag from './AppDrag.vue'
+    import AppDrop from './AppDrop.vue'
     import MovingTasksAndColumns from '../mixins/movingTasksAndColumns.js'
 
     export default {
@@ -40,6 +41,12 @@
 
         mixins: [ MovingTasksAndColumns ],
 
+        components:
+        {
+            AppDrag,
+            AppDrop,
+        },
+
         data()
         {
             return {
@@ -57,16 +64,6 @@
                         id: task.id
                     }
                 })
-            },
-
-            pickupTask(event, taskIndex, fromColumnIndex)
-            {
-                event.dataTransfer.effectAllowed = 'move'
-                event.dataTransfer.dropEffect = 'move'
-
-                event.dataTransfer.setData('from-task-index', taskIndex)
-                event.dataTransfer.setData('from-column-index', fromColumnIndex)
-                event.dataTransfer.setData('type', 'task')
             },
         },
     }
