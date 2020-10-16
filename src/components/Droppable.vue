@@ -13,10 +13,9 @@
         {
             onDrop(event)
             {
-                alert()
                 const transferData = JSON.parse(event.dataTransfer.getData('payload'))
 
-                this.$emit('drop', this.transferData)
+                this.$emit('drop', transferData)
             },
         },
     }

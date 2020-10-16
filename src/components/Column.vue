@@ -1,6 +1,6 @@
 <template>
-    <App-drop @drop="moveTaskOrColumn">
-        <App-drag :transferData="{ type: 'column', fromColumnIndex: columnIndex }">
+    <Droppable @drop="moveTaskOrColumn">
+        <Draggable :transferData="{ type: 'column', fromColumnIndex: columnIndex }">
             <div class="column">
                 <div class="flex items-center mb-2 font-bold">
                     {{ column.name }}
@@ -24,13 +24,13 @@
                     />
                 </div>
             </div>
-        </App-drag>
-    </App-drop>
+        </Draggable>
+    </Droppable>
 </template>
 
 <script>
-    import AppDrag from './AppDrag.vue'
-    import AppDrop from './AppDrop.vue'
+    import Draggable from './Draggable.vue'
+    import Droppable from './Droppable.vue'
     import Task from '../components/Task.vue'
     import MovingTasksAndColumns from '../mixins/movingTasksAndColumns.js'
 
@@ -38,8 +38,8 @@
         components:
         {
             Task,
-            AppDrag,
-            AppDrop,
+            Draggable,
+            Droppable,
         },
 
         mixins: [ MovingTasksAndColumns ],

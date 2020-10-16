@@ -1,6 +1,6 @@
 <template>
-    <App-drop @drop="moveTaskOrColumn">
-        <App-drag :transferData="{ type: 'task', fromColumnIndex: columnIndex, fromTaskIndex: taskIndex }">
+    <Droppable @drop="moveTaskOrColumn">
+        <Draggable :transferData="{ type: 'task', fromColumnIndex: columnIndex, fromTaskIndex: taskIndex }">
             <div
                 class="task"
                 @click="openTask(task)">
@@ -16,13 +16,13 @@
                     {{ task.description }}
                 </p>
             </div>
-        </App-drag>
-    </App-drop>
+        </Draggable>
+    </Droppable>
 </template>
 
 <script>
-    import AppDrag from './AppDrag.vue'
-    import AppDrop from './AppDrop.vue'
+    import Draggable from './Draggable.vue'
+    import Droppable from './Droppable.vue'
     import MovingTasksAndColumns from '../mixins/movingTasksAndColumns.js'
 
     export default {
@@ -43,8 +43,8 @@
 
         components:
         {
-            AppDrag,
-            AppDrop,
+            Draggable,
+            Droppable,
         },
 
         data()
